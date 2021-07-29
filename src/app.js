@@ -5,17 +5,17 @@ import cors from 'cors';
 import httpStatus from 'http-status';
 import xss from 'xss-clean';
 
-import { successHandler, errorHandler } from './config/morgan.js';
+import { successLogger, errorLogger } from './config/morgan.js';
 import { env } from './config/config.js';
 import routes from './routes/v1/index.js';
 import ApiError from './utils/api-error.js';
-import { errorConverter } from './middlewares/error.js';
+import { errorConverter, errorHandler } from './middlewares/error.js';
 
 const app = express();
 
 if (env !== 'test') {
-  app.use(successHandler);
-  app.use(errorHandler);
+  app.use(successLogger);
+  app.use(errorLogger);
 }
 
 // middlewares
