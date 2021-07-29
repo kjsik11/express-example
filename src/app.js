@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(xss());
 app.use(compression());
-app.use(express.static('../public'));
+app.use(express.static('public'));
 app.use(cors());
 app.options('*', cors());
 
