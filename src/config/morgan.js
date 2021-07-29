@@ -1,7 +1,7 @@
 import morgan, { token } from 'morgan';
 
 import { env } from './config.js';
-import logger from './logger.js';
+import { logger } from './logger.js';
 
 token('message', (req, res) => res.locals.errorMessage || '');
 
