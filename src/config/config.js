@@ -10,7 +10,7 @@ const envVarsSchema = joi
   .object()
   .keys({
     NODE_ENV: joi.string().valid('production', 'development', 'test').required(),
-    PORT: joi.number().default(3000),
+    PORT: joi.number().default(3001),
   })
   .unknown();
 

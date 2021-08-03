@@ -34,7 +34,6 @@ if (env === 'production') {
 
 // Api routes
 app.use('/v1', routes);
-
 // 404 error
 app.use((_req, _res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
