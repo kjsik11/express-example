@@ -1,9 +1,10 @@
 import { Router } from 'express';
+import tradeRouter from './trade.js';
 
 const router = Router();
 
 router.get('/', async (_req, res) => {
-  res.json({ hello: 'world' });
+  res.json({ hello: 'test' });
 });
 
 router.post('/', async (req, res) => {
@@ -13,5 +14,7 @@ router.post('/', async (req, res) => {
 
   res.json({ post: data });
 });
+
+router.use('/trade', tradeRouter);
 
 export default router;
