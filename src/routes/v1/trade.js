@@ -3,42 +3,30 @@ import Joi from 'joi';
 import request from 'request';
 import { parseStringPromise } from 'xml2js';
 
+import checkApiKey from '../../middlewares/check-api-key.js';
+
 const router = Router();
 
 const checkBodySchema = Joi.object({
   applicationNumber: Joi.number().label('applicationNumber').required(),
 });
-const checkApiKeySchema = Joi.string().label('apiKey').required();
 
 const accessKey = process.env.KIPRIS_ACCESS_KEY;
 const adminKey = process.env.ADMIN_KEY;
 const url = process.env.TRADEMARK_URL;
 
 if (!accessKey) throw Error('No Such Api-key');
-
 if (!adminKey) throw Error('No Such Admin-Key');
-
 if (!url) throw Error('No Such url');
 
+router.use('/', checkApiKey);
+
 router.get('/', async (req, res) => {
-  const apiKey = await checkApiKeySchema
-    .validateAsync(req.headers.authorization)
-    .catch((err) => res.status(400).json({ error: err.message }));
-
-  if (apiKey !== adminKey) {
-    res.status(401).end();
-  }
-
   const { db } = req.app.locals;
 
-  const data = await db
-    .collection('trademark')
-    .find({
-      deletedAT: null,
-    })
-    .toArray();
+  const data = await db.collection('trademark').find({}).limit(10).toArray();
 
-  res.json({ tradeMarkes: data.map((val) => val.tradeMarkInfo) });
+  return res.json({ tradeMarkes: data.map((val) => val.tradeMarkInfo) });
 });
 
 router.post('/', async (req, res) => {
@@ -46,14 +34,7 @@ router.post('/', async (req, res) => {
     .validateAsync(req.body)
     .catch((err) => res.status(400).json({ error: err.message }));
 
-  const apiKey = await checkApiKeySchema
-    .validateAsync(req.headers.authorization)
-    .catch((err) => res.status(400).json({ error: err.message }));
-
-  if (apiKey !== adminKey) {
-    res.status(401).end();
-  }
-
+  // FIXME: 🤮 lol 🤮
   await request.get({ url, qs: { applicationNumber, accessKey } }, async (err, response) => {
     if (err) res.status(404).json({ error: 'trademark server error' });
 
@@ -80,9 +61,8 @@ router.post('/', async (req, res) => {
         const { insertedId } = await db.collection('trademark').insertOne({
           tradeMarkInfo: items.TradeMarkInfo,
           createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAT: null,
         });
+
         res.json({ insertedId });
       }
     }

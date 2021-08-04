@@ -4,7 +4,7 @@ import { env } from '../config/config.js';
 import { logger } from '../config/logger.js';
 import ApiError from '../utils/api-error.js';
 
-export const errorConverter = (err, _req, _res, next) => {
+export const errorConverter = (err, _req, res, next) => {
   let error = err;
   if (!(error instanceof ApiError)) {
     const statusCode = error.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
